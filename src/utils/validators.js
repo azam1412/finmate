@@ -18,6 +18,9 @@ export function parseId(value, fieldName = "id") {
         text = value.trim();
     } else if (typeof value === "number" && Number.isSafeInteger(value)) {
         text = String(value);
+    } else if (typeof value === "bigint") {
+        // Id dari database bertipe BigInt; pemanggil internal boleh meneruskannya langsung.
+        text = value.toString();
     } else {
         throw validationError(`${fieldName} must be a positive integer`, fieldName);
     }

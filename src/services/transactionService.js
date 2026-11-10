@@ -289,3 +289,6 @@ export async function createExpense(userId, input) {
 export async function createTransfer(userId, input) {
     return createPending(userId, parseTransferInput(input));
 }
+
+// Dipakai service lain (konfirmasi, pembatalan) agar bentuk hasil transaksi selalu sama.
+export { present as presentTransaction };
