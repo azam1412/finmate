@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
+import { buildCorsOptions } from "./config/cors.js";
 import prisma from "./config/database.js";
 
 import apiRouter from "./routes/index.js";
@@ -19,8 +20,13 @@ app.set("json replacer", jsonReplacer);
 
 const PORT = process.env.PORT || 3000;
 
+// Selama belum ada autentikasi, server hanya mendengarkan di komputer ini (loopback).
+// Ubah BIND_HOST hanya bila Anda benar-benar mengerti risikonya.
+const HOST = process.env.BIND_HOST || "127.0.0.1";
+const LOOPBACK_HOSTS = new Set(["127.0.0.1", "localhost", "::1"]);
+
 // Middleware
-app.use(cors());
+app.use(cors(buildCorsOptions(process.env)));
 app.use(helmet());
 app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true }));
@@ -69,6 +75,13 @@ app.use(errorHandler);
 export default app;
 
 //menjalankan server
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+app.listen(PORT, HOST, () => {
+    console.log(`Server is running on http://${HOST}:${PORT}`);
+
+    if (!LOOPBACK_HOSTS.has(HOST)) {
+        console.warn(
+            `PERINGATAN: server dapat diakses dari luar komputer ini (BIND_HOST=${HOST}), ` +
+                "padahal autentikasi belum tersedia. Jangan ekspos API ini ke jaringan publik."
+        );
+    }
 });

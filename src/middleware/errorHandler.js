@@ -41,6 +41,18 @@ export function errorHandler(err, req, res, next) {
         if (err.code === "P2028") {
             return sendError(res, 503, "DATABASE_BUSY", "Database is busy, please try again");
         }
+
+        // P2034: transaksi database gagal karena konflik penulisan atau deadlock. Aman diulang.
+        // Hanya kode ini yang dipetakan ke TRANSACTION_CONFLICT; error database lain tetap 500.
+        if (err.code === "P2034") {
+            res.set("Retry-After", "1");
+            return sendError(
+                res,
+                503,
+                "TRANSACTION_CONFLICT",
+                "The request conflicted with another operation, please try again"
+            );
+        }
     }
 
     // 4. Selain itu dianggap bug: catat lengkap di server, tampilkan pesan umum ke pengguna.
