@@ -14,3 +14,8 @@ export function presentResultForClient({ transaction, balances }) {
         balances: balances.map(({ walletId, balance }) => ({ walletId, balance })),
     };
 }
+
+// Daftar transaksi: setiap elemen berbentuk sama dengan hasil create/confirm (tanpa userId).
+export function presentTransactionListForClient(transactions) {
+    return transactions.map(presentTransactionForClient);
+}

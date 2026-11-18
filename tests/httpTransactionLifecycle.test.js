@@ -439,8 +439,8 @@ describe("kontrak body dan keamanan pada confirm/cancel", () => {
         });
     }
 
-    test("GET pada route confirm/cancel dan daftar/detail transaksi tetap 404 (baru ada di 2.3c)", async () => {
-        for (const path of ["/api/transactions/1/confirm", "/api/transactions/1/cancel", "/api/transactions", "/api/transactions/1"]) {
+    test("GET pada route confirm/cancel tetap 404 (daftar/detail diuji di httpTransactionQuery)", async () => {
+        for (const path of ["/api/transactions/1/confirm", "/api/transactions/1/cancel"]) {
             assertError(await call(serverA.base, "GET", path), 404, "ROUTE_NOT_FOUND");
         }
     });

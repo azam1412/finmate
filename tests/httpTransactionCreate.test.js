@@ -331,10 +331,8 @@ describe("validasi input", () => {
 // ---------- route lain ----------
 
 describe("route", () => {
-    test("route yang belum dibuat -> 404 ROUTE_NOT_FOUND (list/detail baru ada di 2.3c; confirm/cancel diuji di httpTransactionLifecycle)", async () => {
+    test("route yang tidak ada -> 404 ROUTE_NOT_FOUND (list/detail diuji di httpTransactionQuery; confirm/cancel di httpTransactionLifecycle)", async () => {
         for (const [method, path] of [
-            ["GET", "/api/transactions"],
-            ["GET", "/api/transactions/1"],
             ["POST", "/api/transactions/unknown"],
         ]) {
             const res = await call(serverA.base, method, path, method === "POST" ? { body: {} } : {});

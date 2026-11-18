@@ -1,7 +1,12 @@
 import { createIncome, createExpense, createTransfer } from "../services/transactionService.js";
 import { confirmTransaction } from "../services/confirmationService.js";
 import { cancelTransaction } from "../services/cancellationService.js";
-import { presentTransactionForClient, presentResultForClient } from "./transactionPresenter.js";
+import { listTransactions, getTransaction } from "../services/transactionQueryService.js";
+import {
+    presentTransactionForClient,
+    presentResultForClient,
+    presentTransactionListForClient,
+} from "./transactionPresenter.js";
 
 // Controller TIPIS: hanya menghubungkan HTTP dengan service. Semua validasi dan aturan bisnis
 // (kepemilikan, status, saldo, penguncian) ada di service. userId HANYA dari req.user.id
@@ -41,3 +46,21 @@ function actionHandler(service) {
 
 export const postConfirm = actionHandler(confirmTransaction);
 export const postCancel = actionHandler(cancelTransaction);
+
+// Membaca transaksi (Stage 2.3c). Query string divalidasi di service; userId hanya dari req.user.id.
+// Daftar: { success, data: [transaksi], pagination }. Detail: { success, data: transaksi }.
+export async function getList(req, res) {
+    const { transactions, pagination } = await listTransactions(req.user.id, req.query);
+
+    res.status(200).json({
+        success: true,
+        data: presentTransactionListForClient(transactions),
+        pagination,
+    });
+}
+
+export async function getDetail(req, res) {
+    const transaction = await getTransaction(req.user.id, req.params.id, req.query);
+
+    res.status(200).json({ success: true, data: presentTransactionForClient(transaction) });
+}
