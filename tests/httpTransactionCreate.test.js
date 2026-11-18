@@ -331,12 +331,10 @@ describe("validasi input", () => {
 // ---------- route lain ----------
 
 describe("route", () => {
-    test("route yang belum dibuat di 2.3a -> 404 ROUTE_NOT_FOUND (tidak ada confirm/cancel/list)", async () => {
+    test("route yang belum dibuat -> 404 ROUTE_NOT_FOUND (list/detail baru ada di 2.3c; confirm/cancel diuji di httpTransactionLifecycle)", async () => {
         for (const [method, path] of [
             ["GET", "/api/transactions"],
             ["GET", "/api/transactions/1"],
-            ["POST", "/api/transactions/1/confirm"],
-            ["POST", "/api/transactions/1/cancel"],
             ["POST", "/api/transactions/unknown"],
         ]) {
             const res = await call(serverA.base, method, path, method === "POST" ? { body: {} } : {});
